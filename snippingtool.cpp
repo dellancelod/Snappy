@@ -14,7 +14,6 @@ SnippingTool::~SnippingTool() {}
 void SnippingTool::paintEvent(QPaintEvent *event) {
     Q_UNUSED(event);
     QPainter painter(this);
-    qDebug() << "paintEvent called";
     painter.setPen(Qt::red);
     painter.setBrush(QColor(255, 0, 0, 50));
     painter.drawRect(QRect(startPoint, endPoint));
@@ -39,6 +38,10 @@ void SnippingTool::mouseReleaseEvent(QMouseEvent *event) {
     if (event->button() == Qt::LeftButton) {
         isSelecting = false;
         QRect selectedRect(startPoint, endPoint);
+
+        this->hide();
+        QGuiApplication::processEvents();
+
         QPixmap screenshot = QGuiApplication::primaryScreen()->grabWindow(0, selectedRect.x(), selectedRect.y(), selectedRect.width(), selectedRect.height());
         screenshot.save("screenshot.png");
         close();
