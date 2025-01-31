@@ -38,7 +38,7 @@ void SnippingTool::mouseMoveEvent(QMouseEvent *event) {
 
 void SnippingTool::mouseReleaseEvent(QMouseEvent *event) {
     if (event->button() == Qt::LeftButton) {
-        QRect selectedRect(startPoint, endPoint);
+        QRect selectedRect = QRect(startPoint, endPoint).normalized();
         if(selectedRect.width() < 1 || selectedRect.height() < 1){
             return;
         }

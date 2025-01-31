@@ -8,6 +8,8 @@ EditorWindow::EditorWindow(const QPixmap &image, QWidget *parent)
     : QWidget(parent), screenshot(image), scaleFactor(1.0) {
 
     setWindowTitle("Screenshot Editor");
+    setMinimumSize(200, 200); // Set minimum width and height
+
     resize(screenshot.size());
 
     // Add a save button
