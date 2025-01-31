@@ -34,10 +34,10 @@ void EditorWindow::paintEvent(QPaintEvent *event) {
 }
 void EditorWindow::wheelEvent(QWheelEvent *event) {
     // Check if the Alt key is held down while scrolling
-    if (event->modifiers() & Qt::AltModifier) {
+    if (event->modifiers() & Qt::ControlModifier) {
         // Check the direction of the scroll
 
-        if (event->angleDelta().x() > 0) {
+        if (event->angleDelta().y() > 0) {
             // Zoom in
             scaleFactor += 0.1f;
         } else {
