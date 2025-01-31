@@ -25,6 +25,7 @@ void SnippingTool::mousePressEvent(QMouseEvent *event) {
         qDebug() << "Mouse press at:" << event->pos();
         startPoint = event->pos();
         isSelecting = true;
+
     }
 }
 
@@ -37,8 +38,11 @@ void SnippingTool::mouseMoveEvent(QMouseEvent *event) {
 
 void SnippingTool::mouseReleaseEvent(QMouseEvent *event) {
     if (event->button() == Qt::LeftButton) {
-        isSelecting = false;
         QRect selectedRect(startPoint, endPoint);
+        if(selectedRect.width() < 1 || selectedRect.height() < 1){
+            return;
+        }
+        isSelecting = false;
 
         // Hide the overlay before capturing
         this->hide();
