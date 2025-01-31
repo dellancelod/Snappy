@@ -25,6 +25,8 @@ protected:
 
 private:
     QPoint startPoint, endPoint;
+    QRect selectedRect;
+    QPixmap grabbedScreen;
     bool isSelecting;
 };
 

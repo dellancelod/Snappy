@@ -6,6 +6,8 @@ SnippingTool::SnippingTool(QWidget *parent) : QWidget(parent), isSelecting(false
     setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::Tool);
     setAttribute(Qt::WA_TranslucentBackground);
     setWindowState(Qt::WindowFullScreen);
+
+    grabbedScreen = QGuiApplication::primaryScreen()->grabWindow(0);
     qDebug() << "SnippingTool geometry:" << this->geometry();
 }
 
@@ -15,22 +17,30 @@ void SnippingTool::paintEvent(QPaintEvent *event) {
     Q_UNUSED(event);
     QPainter painter(this);
     // Fill the entire screen with black
+
+    selectedRect = QRect(startPoint, endPoint).normalized();
+    painter.drawPixmap(0, 0, grabbedScreen);
     painter.fillRect(rect(), QColor(0, 0, 0, 127)); // Semi-transparent black overlay
 
-    // Clear the selected area to make it fully transparent
-    painter.setCompositionMode(QPainter::CompositionMode_Clear);
-    painter.fillRect(QRect(startPoint, endPoint).normalized(), Qt::transparent);
+    if(selectedRect.width() > 1 && selectedRect.height() > 1){
+        // Clear the selected area to make it fully transparent
+        painter.setCompositionMode(QPainter::CompositionMode_Clear);
+        painter.fillRect(selectedRect, Qt::transparent);
 
-    // Draw a red outline around the selection area
-    painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
-    painter.setPen(QPen(Qt::white, 2));
-    painter.drawRect(QRect(startPoint, endPoint).normalized());
+        // Draw a red outline around the selection area
+        painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
+        painter.setPen(QPen(Qt::white, 2));
+        painter.drawRect(selectedRect);
+    }
+
+
 }
 
 void SnippingTool::mousePressEvent(QMouseEvent *event) {
     if (event->button() == Qt::LeftButton) {
         qDebug() << "Mouse press at:" << event->pos();
         startPoint = event->pos();
+        endPoint = startPoint;
         isSelecting = true;
 
     }
@@ -45,8 +55,10 @@ void SnippingTool::mouseMoveEvent(QMouseEvent *event) {
 
 void SnippingTool::mouseReleaseEvent(QMouseEvent *event) {
     if (event->button() == Qt::LeftButton) {
-        QRect selectedRect = QRect(startPoint, endPoint).normalized();
-        if(selectedRect.width() < 1 || selectedRect.height() < 1){
+
+        qDebug() << "Width:" << selectedRect.width();
+        qDebug() << "Height:" << selectedRect.height();
+        if(selectedRect.width() <= 1 || selectedRect.height() <= 1){
             return;
         }
         isSelecting = false;
