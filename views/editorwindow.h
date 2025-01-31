@@ -14,14 +14,9 @@ public:
 
 protected:
     void paintEvent(QPaintEvent *event) override;
-    void mousePressEvent(QMouseEvent *event) override;
-    void mouseMoveEvent(QMouseEvent *event) override;
-    void mouseReleaseEvent(QMouseEvent *event) override;
 
 private:
     QPixmap screenshot;
-    QPoint startPoint, endPoint;
-    bool isDrawing;
 
 public slots:
     void saveScreenshot();

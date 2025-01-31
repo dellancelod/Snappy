@@ -1,6 +1,6 @@
 // SnippingTool.h
-#ifndef SNIPPINGTOOL_H
-#define SNIPPINGTOOL_H
+#ifndef SNIPPINGWINDOW_H
+#define SNIPPINGWINDOW_H
 
 #include <QWidget>
 #include <QPainter>
@@ -27,4 +27,4 @@ private:
     bool isSelecting;
 };
 
-#endif // SNIPPINGTOOL_H
+#endif // SNIPPINGWINDOW_H

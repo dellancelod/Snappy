@@ -5,7 +5,7 @@
 #include <QVBoxLayout>
 
 EditorWindow::EditorWindow(const QPixmap &image, QWidget *parent)
-    : QWidget(parent), screenshot(image), isDrawing(false) {
+    : QWidget(parent), screenshot(image) {
 
     setWindowTitle("Screenshot Editor");
     resize(screenshot.size());
@@ -25,31 +25,6 @@ void EditorWindow::paintEvent(QPaintEvent *event) {
     QPainter painter(this);
     painter.drawPixmap(0, 0, screenshot);
 
-    if (isDrawing) {
-        painter.setPen(Qt::red);
-        painter.drawRect(QRect(startPoint, endPoint));
-    }
-}
-
-void EditorWindow::mousePressEvent(QMouseEvent *event) {
-    if (event->button() == Qt::LeftButton) {
-        startPoint = event->pos();
-        isDrawing = true;
-    }
-}
-
-void EditorWindow::mouseMoveEvent(QMouseEvent *event) {
-    if (isDrawing) {
-        endPoint = event->pos();
-        update();
-    }
-}
-
-void EditorWindow::mouseReleaseEvent(QMouseEvent *event) {
-    if (event->button() == Qt::LeftButton) {
-        isDrawing = false;
-        update();
-    }
 }
 
 void EditorWindow::saveScreenshot() {

@@ -1,5 +1,5 @@
 // SnippingTool.cpp
-#include "snippingtool.h"
+#include "snippingwindow.h"
 #include "editorwindow.h"
 
 SnippingTool::SnippingTool(QWidget *parent) : QWidget(parent), isSelecting(false) {

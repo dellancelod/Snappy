@@ -1,4 +1,4 @@
-#include "snippingtool.h"
+#include "snippingwindow.h"
 
 #include <QApplication>
 #include <QDebug>
