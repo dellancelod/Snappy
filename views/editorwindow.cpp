@@ -5,7 +5,7 @@
 #include <QVBoxLayout>
 
 EditorWindow::EditorWindow(const QPixmap &image, QWidget *parent)
-    : QWidget(parent), screenshot(image) {
+    : QWidget(parent), screenshot(image), scaleFactor(1.0) {
 
     setWindowTitle("Screenshot Editor");
     resize(screenshot.size());
@@ -23,8 +23,38 @@ EditorWindow::EditorWindow(const QPixmap &image, QWidget *parent)
 void EditorWindow::paintEvent(QPaintEvent *event) {
     Q_UNUSED(event);
     QPainter painter(this);
-    painter.drawPixmap(0, 0, screenshot);
 
+    QPixmap scaledScreenshot = screenshot.scaled(screenshot.size() * scaleFactor, Qt::KeepAspectRatio);
+
+    int xOffset = (width() - scaledScreenshot.width()) / 2;
+    int yOffset = (height() - scaledScreenshot.height()) / 2;
+
+    painter.drawPixmap(xOffset, yOffset, scaledScreenshot);
+
+}
+void EditorWindow::wheelEvent(QWheelEvent *event) {
+    // Check if the Alt key is held down while scrolling
+    if (event->modifiers() & Qt::AltModifier) {
+        // Check the direction of the scroll
+
+        if (event->angleDelta().x() > 0) {
+            // Zoom in
+            scaleFactor += 0.1f;
+        } else {
+            // Zoom out
+            scaleFactor -= 0.1f;
+        }
+
+        // Ensure the image doesn't get too small
+        if (scaleFactor < 0.1) scaleFactor = 0.1;
+        if (scaleFactor > 3.0) scaleFactor = 3.0;
+
+        // Repaint the window to show the resized image
+        update();
+    }
+
+    // Call the base class method to handle default behavior
+    QWidget::wheelEvent(event);
 }
 
 void EditorWindow::saveScreenshot() {
