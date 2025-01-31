@@ -1,4 +1,4 @@
-QT       += core gui
+QT       += core widgets gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -10,10 +10,12 @@ CONFIG += c++17
 
 SOURCES += \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    snippingtool.cpp
 
 HEADERS += \
-    mainwindow.h
+    mainwindow.h \
+    snippingtool.h
 
 FORMS += \
     mainwindow.ui
