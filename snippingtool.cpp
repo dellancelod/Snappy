@@ -1,5 +1,6 @@
 // SnippingTool.cpp
 #include "snippingtool.h"
+#include "editorwindow.h"
 
 SnippingTool::SnippingTool(QWidget *parent) : QWidget(parent), isSelecting(false) {
     setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::Tool);
@@ -39,11 +40,18 @@ void SnippingTool::mouseReleaseEvent(QMouseEvent *event) {
         isSelecting = false;
         QRect selectedRect(startPoint, endPoint);
 
+        // Hide the overlay before capturing
         this->hide();
         QGuiApplication::processEvents();
 
+        // Capture the screenshot
         QPixmap screenshot = QGuiApplication::primaryScreen()->grabWindow(0, selectedRect.x(), selectedRect.y(), selectedRect.width(), selectedRect.height());
-        screenshot.save("screenshot.png");
+
+        // Open the screenshot editor window
+        EditorWindow *editor = new EditorWindow(screenshot);
+        editor->show();
+
+        // Close the snipping tool
         close();
     }
 }
