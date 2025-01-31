@@ -4,8 +4,7 @@
 
 SnippingTool::SnippingTool(QWidget *parent) : QWidget(parent), isSelecting(false) {
     setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::Tool);
-    setWindowOpacity(0.6);
-    setStyleSheet("QWidget{background: #000000}");
+    setAttribute(Qt::WA_TranslucentBackground);
     setWindowState(Qt::WindowFullScreen);
     qDebug() << "SnippingTool geometry:" << this->geometry();
 }
@@ -15,9 +14,17 @@ SnippingTool::~SnippingTool() {}
 void SnippingTool::paintEvent(QPaintEvent *event) {
     Q_UNUSED(event);
     QPainter painter(this);
-    painter.setPen(Qt::red);
-    painter.setBrush(QColor(255, 0, 0, 50));
-    painter.drawRect(QRect(startPoint, endPoint));
+    // Fill the entire screen with black
+    painter.fillRect(rect(), QColor(0, 0, 0, 127)); // Semi-transparent black overlay
+
+    // Clear the selected area to make it fully transparent
+    painter.setCompositionMode(QPainter::CompositionMode_Clear);
+    painter.fillRect(QRect(startPoint, endPoint).normalized(), Qt::transparent);
+
+    // Draw a red outline around the selection area
+    painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
+    painter.setPen(QPen(Qt::white, 2));
+    painter.drawRect(QRect(startPoint, endPoint).normalized());
 }
 
 void SnippingTool::mousePressEvent(QMouseEvent *event) {

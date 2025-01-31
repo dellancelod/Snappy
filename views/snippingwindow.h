@@ -8,6 +8,7 @@
 #include <QScreen>
 #include <QGuiApplication>
 #include <QPixmap>
+#include <QPainterPath>
 
 class SnippingTool : public QWidget {
     Q_OBJECT
