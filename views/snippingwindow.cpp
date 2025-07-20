@@ -18,21 +18,26 @@ void SnippingTool::paintEvent(QPaintEvent *event) {
     QPainter painter(this);
     // Fill the entire screen with black
 
-    selectedRect = QRect(startPoint, endPoint).normalized();
     painter.drawPixmap(0, 0, grabbedScreen);
-    painter.fillRect(rect(), QColor(0, 0, 0, 127)); // Semi-transparent black overlay
 
-    if(selectedRect.width() > 1 && selectedRect.height() > 1){
-        // Clear the selected area to make it fully transparent
-        painter.setCompositionMode(QPainter::CompositionMode_Clear);
-        painter.fillRect(selectedRect, Qt::transparent);
+    selectedRect = QRect(startPoint, endPoint).normalized();
+    // Create a path covering the full window
+    QPainterPath overlayPath;
+    overlayPath.addRect(rect());
 
-        // Draw a red outline around the selection area
-        painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
+    // If selection is valid, subtract it from the overlay path
+    if (selectedRect.width() > 1 && selectedRect.height() > 1) {
+        QPainterPath selectionPath;
+        selectionPath.addRect(selectedRect);
+        overlayPath = overlayPath.subtracted(selectionPath);
+
+        // Draw selection border
         painter.setPen(QPen(Qt::white, 2));
         painter.drawRect(selectedRect);
     }
 
+    // Fill the rest of the screen with semi-transparent black
+    painter.fillPath(overlayPath, QColor(0, 0, 0, 127));
 
 }
 
@@ -56,8 +61,8 @@ void SnippingTool::mouseMoveEvent(QMouseEvent *event) {
 void SnippingTool::mouseReleaseEvent(QMouseEvent *event) {
     if (event->button() == Qt::LeftButton) {
 
-        qDebug() << "Width:" << selectedRect.width();
-        qDebug() << "Height:" << selectedRect.height();
+        qDebug() << "Screen: " << grabbedScreen;
+        qDebug() << "Screenshot: " << selectedRect;
         if(selectedRect.width() <= 1 || selectedRect.height() <= 1){
             return;
         }
@@ -68,7 +73,11 @@ void SnippingTool::mouseReleaseEvent(QMouseEvent *event) {
         QGuiApplication::processEvents();
 
         // Capture the screenshot
-        QPixmap screenshot = QGuiApplication::primaryScreen()->grabWindow(0, selectedRect.x(), selectedRect.y(), selectedRect.width(), selectedRect.height());
+
+        qreal dpr = grabbedScreen.devicePixelRatio();
+        QRect scaledRect = QRect(selectedRect.topLeft() * dpr, selectedRect.size() * dpr);
+        QPixmap screenshot = grabbedScreen.copy(scaledRect);
+        screenshot.setDevicePixelRatio(dpr);
 
         // Open the screenshot editor window
         EditorWindow *editor = new EditorWindow(screenshot);
